@@ -1,0 +1,48 @@
+.header-container {
+  width: 100%;
+  height: auto;
+  border-bottom: 2px solid rgba(37, 154, 158, 0.363);
+
+  .navbar-container {
+    width: 100vw;
+    display: flex;
+    background-image: linear-gradient(
+      rgba(255, 30, 0, 0.514),
+      rgba(133, 255, 52, 0.274)
+    );
+    padding: 10px;
+    align-items: center;
+    justify-content: space-around;
+    gap: 40vw;
+
+    h2 a {
+      text-decoration: none;
+      color: black;
+      display: inline-block;
+      transition: transform 0.2s ease;
+      font-size: 30px;
+
+      &:hover {
+        transform: scale(1.03);
+        color: white;
+      }
+    }
+
+    .navbar-links {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 50px;
+
+      a {
+        text-decoration: none;
+        color: darkblue;
+        font-size: 19px;
+
+        &:hover {
+          color: white;
+        }
+      }
+    }
+  }
+}
