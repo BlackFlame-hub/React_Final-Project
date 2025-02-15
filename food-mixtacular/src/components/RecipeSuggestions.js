@@ -62,7 +62,10 @@ const RecipeSuggestions = () => {
       ) : (
         <Accordion defaultActiveKey="0">
           {recipes.map((someRecipe, index) => (
-            <Accordion.Item eventKey={index.toString()} key={someRecipe.id}>
+            <Accordion.Item
+              eventKey={index.toString()}
+              key={`${someRecipe.id}-${index}`}
+            >
               <Accordion.Header>{someRecipe.title}</Accordion.Header>
               <Accordion.Body className="accordion-content">
                 <img
@@ -73,9 +76,9 @@ const RecipeSuggestions = () => {
                 <div>
                   <h3>Ingredients:</h3>
                   <ul>
-                    {someRecipe.extendedIngredients?.map((someIngredients) => (
-                      <li key={someIngredients.id}>
-                        {someIngredients.original}
+                    {someRecipe.extendedIngredients?.map((ingredient, idx) => (
+                      <li key={`${ingredient.id}-${idx}`}>
+                        {ingredient.original}
                       </li>
                     ))}
                   </ul>
