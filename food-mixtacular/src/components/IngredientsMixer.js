@@ -2,86 +2,57 @@ import React, { useState } from "react";
 import "normalize.css";
 import "../styles/main.scss";
 import { API_KEY, API_BASE_URL } from "../config";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Accordion from "react-bootstrap/Accordion";
 
-const App = () => {
+const IngredientsMixer = () => {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [selectedSpices, setSelectedSpices] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [selectedSpices, setSelectedSpices] = useState([]);
 
-  // Ingredients and spices variables
   const ingredients = [
-    "bacon",
-    "beef",
-    "butter",
-    "carrot",
-    "cheese",
-    "chicken",
-    "egg",
-    "garlic",
-    "lettuce",
-    "milk",
-    "mushroom",
-    "olive oil",
-    "onion",
-    "pasta",
-    "peppers",
-    "potato",
-    "rice",
-    "salmon",
-    "shrimp",
-    "spinach",
-    "tomato",
-    "yogurt",
+    "Bacon",
+    "Beef",
+    "Butter",
+    "Carrot",
+    "Cheese",
+    "Chicken",
+    "Egg",
+    "Garlic",
+    "Lettuce",
+    "Milk",
+    "Mushroom",
+    "Olive oil",
+    "Onion",
+    "Pasta",
+    "Peppers",
+    "Potato",
+    "Rice",
+    "Salmon",
+    "Shrimp",
+    "Spinach",
+    "Tomato",
+    "Yogurt",
   ];
-
   const spices = [
-    "basil",
-    "black pepper",
-    "cinnamon",
-    "coriander",
-    "cumin",
-    "oregano",
-    "paprika",
-    "parsley",
-    "salt",
-    "thyme",
+    "Basil",
+    "Black pepper",
+    "Cinnamon",
+    "Coriander",
+    "Cumin",
+    "Oregano",
+    "Paprika",
+    "Parsley",
+    "Salt",
+    "Thyme",
   ];
 
-  // The famous downlaod button
-  const downloadRecipe = (recipe) => {
-    const recipeText = `Recipe: ${recipe.title}
-    
-    Ingredients:
-    ${
-      recipe.missedIngredients?.map((ing) => `- ${ing.original}`).join("\n") ||
-      "No ingredients details available."
-    }
-
-    Instructions:
-    ${
-      recipe.analyzedInstructions?.[0]?.steps
-        ?.map((step, index) => `${step.step}`)
-        .join("\n") || "No instructions available."
-    }`;
-
-    const blob = new Blob([recipeText], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${recipe.title.replace(/\s+/g, "_")}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // fetch recipe api
   const fetchRecipes = async () => {
     const allSelectedItems = [...selectedIngredients, ...selectedSpices];
-
     if (allSelectedItems.length > 0) {
       const ingredientsParam = allSelectedItems.join(",");
-      const API_URL = `${API_BASE_URL}/findByIngredients?apiKey=${API_KEY}&ingredients=${ingredientsParam}&number=5`;
-
+      const API_URL = `${API_BASE_URL}/findByIngredients?apiKey=${API_KEY}&ingredients=${ingredientsParam}&number=4`;
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
@@ -92,65 +63,64 @@ const App = () => {
     }
   };
 
-  // Checkboxes handling
-
-  // Ingredients
-  const handleIngredientChange = (ingredient) => {
-    setSelectedIngredients((prevSelected) =>
-      prevSelected.includes(ingredient)
-        ? prevSelected.filter((item) => item !== ingredient)
-        : [...prevSelected, ingredient]
-    );
-  };
-
-  // Spices
-  const handleSpiceChange = (spice) => {
-    setSelectedSpices((prevSelected) =>
-      prevSelected.includes(spice)
-        ? prevSelected.filter((item) => item !== spice)
-        : [...prevSelected, spice]
-    );
-  };
-
-  // Clearing ingredients/spices checkboxes
-  const clearSelection = () => {
-    setSelectedIngredients([]);
-    setSelectedSpices([]);
-  };
-
-  // Fetch recipe details
-  const handleRecipeDetails = async (recipe) => {
+  const fetchRecipeDetails = async (recipeId) => {
     try {
-      const recipeDetailsResponse = await fetch(
-        `${API_BASE_URL}/${recipe.id}/information?apiKey=${API_KEY}`
+      const response = await fetch(
+        `${API_BASE_URL}/${recipeId}/information?apiKey=${API_KEY}`
       );
-      const recipeDetails = await recipeDetailsResponse.json();
-      setSelectedRecipe(recipeDetails);
+      const data = await response.json();
+      setSelectedRecipe(data);
     } catch (error) {
-      console.error("Error fetching the recipe details", error);
+      console.error("Error fetching recipe details", error);
     }
+  };
+
+  const downloadRecipe = (recipe) => {
+    const recipeText = `Recipe: ${recipe.title}\n\nIngredients:\n${
+      recipe.extendedIngredients
+        ?.map((ing) => `- ${ing.original}`)
+        .join("\n") || "No ingredients details available."
+    }\n\nInstructions:\n${
+      recipe.analyzedInstructions?.[0]?.steps
+        .map((step) => `${step.step}`)
+        .join("\n") || "No instructions available."
+    }`;
+
+    const blob = new Blob([recipeText], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${recipe.title}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="wrapper">
       <div className="mixer">
         <section className="ingredients-area">
-          <h1>Ingredients mixer Selection</h1>
+          <h2>Ingredients Selection</h2>
           <div className="ingredients-selection">
             {ingredients.map((ingredient) => (
               <label key={ingredient}>
                 <input
                   type="checkbox"
-                  value={ingredient}
                   checked={selectedIngredients.includes(ingredient)}
-                  onChange={() => handleIngredientChange(ingredient)}
+                  onChange={() =>
+                    setSelectedIngredients((prev) =>
+                      prev.includes(ingredient)
+                        ? prev.filter((item) => item !== ingredient)
+                        : [...prev, ingredient]
+                    )
+                  }
                 />
                 {ingredient}
               </label>
             ))}
           </div>
         </section>
-
         <section className="spices-area">
           <h2>Spices Selection</h2>
           <div className="spices-selection">
@@ -158,58 +128,81 @@ const App = () => {
               <label key={spice}>
                 <input
                   type="checkbox"
-                  value={spice}
                   checked={selectedSpices.includes(spice)}
-                  onChange={() => handleSpiceChange(spice)}
+                  onChange={() =>
+                    setSelectedSpices((prev) =>
+                      prev.includes(spice)
+                        ? prev.filter((item) => item !== spice)
+                        : [...prev, spice]
+                    )
+                  }
                 />
                 {spice}
               </label>
             ))}
           </div>
         </section>
-
         <button onClick={fetchRecipes}>Search Recipes</button>
-        <button onClick={clearSelection}>Reset ingredients</button>
+        <button
+          onClick={() => {
+            setSelectedIngredients([]);
+            setSelectedSpices([]);
+          }}
+        >
+          Reset Ingredients
+        </button>
       </div>
 
       <section className="display-recipe-result">
-        <h1>Recipe Results</h1>
-        <section>
-          {recipes.map((recipe) => (
-            <div key={recipe.id}>
-              <img src={recipe.image} alt={recipe.title} width="300" />
-              <h3>{recipe.title}</h3>
-              <button onClick={() => handleRecipeDetails(recipe)}>
-                View Recipe
-              </button>
-              <button onClick={() => downloadRecipe(recipe)}>
-                Download Recipe
-              </button>{" "}
-            </div>
-          ))}
-        </section>
+        <h1>Recipe Results:</h1>
+        <Accordion>
+          {recipes.length === 0 ? (
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Search for your recipe first!</Accordion.Header>
+              <Accordion.Body>
+                Select ingredients and press "Search Recipes".
+              </Accordion.Body>
+            </Accordion.Item>
+          ) : (
+            recipes.map((recipe, index) => (
+              <Accordion.Item eventKey={String(index)} key={recipe.id}>
+                <Accordion.Header onClick={() => fetchRecipeDetails(recipe.id)}>
+                  {recipe.title}
+                </Accordion.Header>
+                <Accordion.Body className="accordion-content">
+                  <img src={recipe.image} alt={recipe.title} width="300" />
+                  {selectedRecipe?.id === recipe.id && (
+                    <>
+                      <div>
+                        <h3>Ingredients:</h3>
+                        <ul>
+                          {selectedRecipe.extendedIngredients?.map((ing) => (
+                            <li key={ing.id}>{ing.original}</li>
+                          ))}
+                        </ul>
+                        <h3>Instructions:</h3>
+                        <p>
+                          {selectedRecipe.analyzedInstructions?.[0]?.steps
+                            ?.map((step) => step.step)
+                            .join(" ") || "No instructions available."}
+                        </p>
+                        <button
+                          className="downloadButton"
+                          onClick={() => downloadRecipe(selectedRecipe)}
+                        >
+                          Download Recipe
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+            ))
+          )}
+        </Accordion>
       </section>
-
-      {selectedRecipe && (
-        <div>
-          <h1>Cooking Recipe</h1>
-          <h2>{selectedRecipe.title}</h2>
-          <h3>Ingredients:</h3>
-          <ul>
-            {selectedRecipe.extendedIngredients?.map((ingredient) => (
-              <li key={ingredient.id}>{ingredient.name}</li>
-            ))}
-          </ul>
-          <h3>Cooking Instructions:</h3>
-          <ol>
-            {selectedRecipe.analyzedInstructions?.[0]?.steps?.map((step) => (
-              <li key={step.number}>{step.step}</li>
-            ))}
-          </ol>
-        </div>
-      )}
     </div>
   );
 };
 
-export default App;
+export default IngredientsMixer;
