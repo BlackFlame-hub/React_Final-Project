@@ -170,7 +170,7 @@ const IngredientsMixer = () => {
                   {recipe.title}
                 </Accordion.Header>
                 <Accordion.Body className="accordion-content">
-                  <img src={recipe.image} alt={recipe.title} width="300" />
+                  <img src={recipe.image} alt={recipe.title} />
                   {selectedRecipe?.id === recipe.id && (
                     <>
                       <div>

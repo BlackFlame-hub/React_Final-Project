@@ -68,11 +68,7 @@ const RecipeSuggestions = () => {
             >
               <Accordion.Header>{someRecipe.title}</Accordion.Header>
               <Accordion.Body className="accordion-content">
-                <img
-                  src={someRecipe.image}
-                  alt={someRecipe.title}
-                  width="200"
-                />
+                <img src={someRecipe.image} alt={someRecipe.title} />
                 <div>
                   <h3>Ingredients:</h3>
                   <ul>

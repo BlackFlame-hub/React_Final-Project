@@ -120,12 +120,7 @@ const RecipeSearch = () => {
                 {recipe.title}
               </Accordion.Header>
               <Accordion.Body className="accordion-content">
-                <img
-                  src={recipe.image}
-                  alt={recipe.title}
-                  width="200"
-                  className="mb-3"
-                />
+                <img src={recipe.image} alt={recipe.title} className="mb-3" />
                 <div>
                   {selectedRecipe && selectedRecipe.id === recipe.id ? (
                     <>
